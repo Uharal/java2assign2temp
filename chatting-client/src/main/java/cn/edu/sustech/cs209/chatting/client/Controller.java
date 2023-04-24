@@ -1,5 +1,6 @@
 package cn.edu.sustech.cs209.chatting.client;
 
+import client.ClientMain;
 import cn.edu.sustech.cs209.chatting.common.Message;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -15,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import server.MainServer;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -127,6 +129,14 @@ public class Controller implements Initializable {
         stage.setScene(new Scene(box));
         stage.showAndWait();
 
+    }
+    @FXML
+    public void createClient() throws IOException {
+        ClientMain.use();
+    }
+    @FXML
+    public void createServer() throws IOException {
+        MainServer.useser();
     }
     @FXML
     public void createPrivateChat() throws IOException {

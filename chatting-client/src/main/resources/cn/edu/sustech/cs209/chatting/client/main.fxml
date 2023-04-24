@@ -19,12 +19,10 @@
       fx:controller="cn.edu.sustech.cs209.chatting.client.Controller">
     <MenuBar VBox.vgrow="NEVER">
         <Menu mnemonicParsing="false" text="Client">
-            <MenuItem mnemonicParsing="false" onAction="#createPrivateChat" text="New Client"/>
-            <MenuItem mnemonicParsing="false" onAction="#createGroupChat" text="New Group Chat"/>
+            <MenuItem mnemonicParsing="false" onAction="#createClient" text="New Client"/>
         </Menu>
         <Menu mnemonicParsing="false" text="Server">
-            <MenuItem mnemonicParsing="false" onAction="#createPrivateChat" text="New Client"/>
-            <MenuItem mnemonicParsing="false" onAction="#createGroupChat" text="New Group Chat"/>
+            <MenuItem mnemonicParsing="false" onAction="#createServer" text="New Group Chat"/>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
             <MenuItem mnemonicParsing="false" onAction="#Readme" text="Readme"/>

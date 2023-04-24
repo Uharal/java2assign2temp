@@ -15,7 +15,7 @@ import java.net.Socket;
  */
 
 public class MainServer {
-    public static void main(String[] args) {
+    public static void useser(){
         int port = Integer.parseInt(DataBuffer.configProp.getProperty("port"));
         //初始化服务器套节字
         try {
@@ -54,5 +54,8 @@ public class MainServer {
 
         //启动服务器监控窗体
         new ServerInfoFrame();
+    }
+    public static void main(String[] args) {
+       useser();
     }
 }
