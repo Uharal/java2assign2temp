@@ -1,7 +1,14 @@
 package cn.edu.sustech.cs209.chatting.client;
 
 import client.ClientMain;
+import client.ui.RegisterFrame;
+import client.util.ClientUtil;
+import cn.edu.sustech.cs209.chatting.client.UI.Register;
 import cn.edu.sustech.cs209.chatting.common.Message;
+import common.model.entity.Request;
+import common.model.entity.Response;
+import common.model.entity.ResponseStatus;
+import common.model.entity.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,13 +19,22 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import server.MainServer;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -34,6 +50,19 @@ public class Controller implements Initializable {
     String username;
 
     HashSet<String> loggedUsers = new HashSet<>();
+
+    @FXML
+    ListView<String> chatList;
+    @FXML
+    private TextArea inputArea;
+
+// ...
+
+    public void setTextInInputArea(String text) {
+        inputArea.setText(text);
+    }
+
+
 
     /*
     * 初始化方法，在应用程序启动时调用，用于创建登录对话框并让用户输入他们的用户名。
@@ -73,6 +102,32 @@ public class Controller implements Initializable {
             Platform.exit();
         }
 
+        chatList.getItems().add("你的FXML文件是一个XML格式的文本文件，" +
+                "\n用于定义JavaFX用户界面的布局、控件及其属性。" +
+                "\n它的根元素是一个VBox控件，其中包含一个MenuBar、" +
+                "一个SplitPane和一个HBox。\n" +
+                "\n" +
+                "MenuBar控件定义了应用程序的菜单栏，其中有三个菜单，" +
+                "\n分别为“Client”、“Server”和“Help”。" +
+                "\n每个菜单下面有几个菜单项，对应着应用程序的不同功能，" +
+                "如登录、注册、创建聊天室等。\n" +
+                "\n" +
+                "SplitPane控件被用来创建一个水平分割面板，其中左侧是一个ListView控件，" +
+                "\n用于显示聊天室列表。" +
+                "\n右侧是一个垂直分割面板，其中上半部分是一个ListView控件，用于显示聊天内容。" +
+                "\n下半部分是一个HBox控件，其中包含一个TextArea和一个Button控件，用于输入和发送聊天内容。\n" +
+                "\n" +
+                "HBox控件是一个水平布局的控件，用于显示当前登录用户的信息和在线人数。" +
+                "\n其中包含一个Label控件用于显示当前用户的用户名，一个Pane控件用于占位，" +
+                "\n和一个Label控件用于显示当前在线人数。\n" +
+                "\n" +
+                "除了根元素之外，FXML文件中还使用了许多其他JavaFX控件，" +
+                "\n如Label、ListView、SplitPane、TextArea、Button等。" +
+                "\n每个控件都有自己的属性，如fx:id、prefHeight、prefWidth、onAction等，" +
+                "\n可以用来设置控件的各种属性和事件监听器。" +
+                "\n控件还可以嵌套使用，形成复杂的界面布局。");
+
+        inputArea.setText("输入无效，请先查看Help");
         chatContentList.setCellFactory(new MessageCellFactory());
     }
 
@@ -131,8 +186,245 @@ public class Controller implements Initializable {
 
     }
     @FXML
+    public void TestRegister() throws IOException {
+        Stage primaryStage = new Stage();
+        primaryStage.setTitle("Register Form");
+
+        // 创建表单布局
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        // 创建表单控件
+        Label usernameLabel = new Label("Username:");
+        grid.add(usernameLabel, 0, 1);
+        TextField usernameTextField = new TextField();
+        grid.add(usernameTextField, 1, 1);
+
+        Label passwordLabel = new Label("Password:");
+        grid.add(passwordLabel, 0, 2);
+        PasswordField passwordTextField = new PasswordField();
+        grid.add(passwordTextField, 1, 2);
+
+        Label confirmPasswordLabel = new Label("Confirm Password:");
+        grid.add(confirmPasswordLabel, 0, 3);
+        PasswordField confirmPasswordTextField = new PasswordField();
+        grid.add(confirmPasswordTextField, 1, 3);
+
+        // 添加“性别”标签和选择器
+        final String[] genders = {"Male", "Female", "Other"};
+
+        Label genderLabel = new Label("Gender:");
+        GridPane.setConstraints(genderLabel, 0, 4);
+        ChoiceBox<String> genderChoiceBox = new ChoiceBox<>();
+        genderChoiceBox.getItems().addAll(genders);
+        genderChoiceBox.setValue(genders[0]);
+        GridPane.setConstraints(genderChoiceBox, 1, 4);
+
+        Button registerButton = new Button("Register");
+        grid.add(registerButton, 1, 5);
+
+
+        // 处理注册按钮的点击事件
+        registerButton.setOnAction(event -> {
+            String username = usernameTextField.getText();
+            String password = passwordTextField.getText();
+            String confirmPassword = confirmPasswordTextField.getText();
+            String gender = genderChoiceBox.getValue();
+
+            if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Please fill in all the fields.");
+                alert.showAndWait();
+            } else if (!password.equals(confirmPassword)) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Passwords do not match.");
+                alert.showAndWait();
+            } else {
+                // 如果前端正确注册，进行以下操作：
+                System.out.println(username);
+                System.out.println(password);
+                System.out.println(confirmPassword);
+                System.out.println(gender);
+
+                User user = new User(password,username, 'm', 0);
+                System.out.println("user: "+user.getPassword());
+
+                try {
+                    Controller.this.register(user);
+                } catch (IOException | ClassNotFoundException e1) {
+                    e1.printStackTrace();
+                }
+                ((Stage)primaryStage.getScene().getWindow()).close();
+            }
+        });
+
+        Scene scene = new Scene(grid, 400, 275);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+    }
+    @FXML
+    public void TestServer() throws IOException {
+        Stage primaryStage = new Stage();
+        BorderPane root = new BorderPane();
+
+        // 创建标题为 "Starting Server" 的场景
+        primaryStage.setTitle("Starting Server");
+
+        // 创建一个水平的 Box，包含 "Port" 文本、"Close" 按钮、"Send All" 文本、可输入文本框和 "Send" 按钮
+        HBox hbox = new HBox();
+        hbox.setSpacing(10);
+        Label portLabel = new Label("Port");
+        Button closeButton = new Button("Close");
+        Label sendAllLabel = new Label("Send All");
+        TextField textField = new TextField();
+        Button sendButton = new Button("Send");
+        hbox.getChildren().addAll(portLabel, closeButton, sendAllLabel, textField, sendButton);
+
+        // 创建两个导航按钮
+        Button button1 = new Button("Table 1");
+        Button button2 = new Button("Table 2");
+
+        // 创建表格
+        TableView table1 = new TableView();
+        table1.setEditable(true);
+        TableColumn column1 = new TableColumn("Column 1");
+        TableColumn column2 = new TableColumn("Column 2");
+        TableColumn column3 = new TableColumn("Column 3");
+        table1.getColumns().addAll(column1, column2, column3);
+
+        TableView table2 = new TableView();
+        table2.setEditable(true);
+        TableColumn column4 = new TableColumn("Column 1");
+        TableColumn column5 = new TableColumn("Column 2");
+        TableColumn column6 = new TableColumn("Column 3");
+        table2.getColumns().addAll(column4, column5, column6);
+
+        // 创建一个垂直的 Box，包含水平 Box 和两个表格
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(hbox, table1, table2);
+
+        // 把垂直 Box 放在场景的中心
+        root.setCenter(vbox);
+
+        // 把导航按钮放在场景的底部
+        root.setBottom(new HBox(button1, button2));
+
+        // 设置场景大小并展示
+        Scene scene = new Scene(root, 800, 600);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+    @FXML
     public void createClient() throws IOException {
         ClientMain.use();
+
+    }
+
+
+    @FXML
+    public void registerClient(){
+        Stage primaryStage = new Stage();
+        primaryStage.setTitle("Register Form");
+
+        // 创建表单布局
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        // 创建表单控件
+        Label usernameLabel = new Label("Username:");
+        grid.add(usernameLabel, 0, 1);
+        TextField usernameTextField = new TextField();
+        grid.add(usernameTextField, 1, 1);
+
+        Label passwordLabel = new Label("Password:");
+        grid.add(passwordLabel, 0, 2);
+        PasswordField passwordTextField = new PasswordField();
+        grid.add(passwordTextField, 1, 2);
+
+        Label confirmPasswordLabel = new Label("Confirm Password:");
+        grid.add(confirmPasswordLabel, 0, 3);
+        PasswordField confirmPasswordTextField = new PasswordField();
+        grid.add(confirmPasswordTextField, 1, 3);
+
+        // 添加“性别”标签和选择器
+        final String[] genders = {"Male", "Female", "Other"};
+
+        Label genderLabel = new Label("Gender:");
+        GridPane.setConstraints(genderLabel, 0, 4);
+        ChoiceBox<String> genderChoiceBox = new ChoiceBox<>();
+        genderChoiceBox.getItems().addAll(genders);
+        genderChoiceBox.setValue(genders[0]);
+        GridPane.setConstraints(genderChoiceBox, 1, 4);
+
+        Button registerButton = new Button("Register");
+        grid.add(registerButton, 1, 5);
+
+        // 处理注册按钮的点击事件
+        registerButton.setOnAction(event -> {
+            String username = usernameTextField.getText();
+            String password = passwordTextField.getText();
+            String confirmPassword = confirmPasswordTextField.getText();
+            String gender = genderChoiceBox.getValue();
+
+            if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Please fill in all the fields.");
+                alert.showAndWait();
+            } else if (!password.equals(confirmPassword)) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Passwords do not match.");
+                alert.showAndWait();
+            } else {
+                // 如果前端正确注册，进行以下操作：
+                System.out.println(username);
+                System.out.println(password);
+                System.out.println(confirmPassword);
+                System.out.println(gender);
+
+                User user = new User(password,username, 'm', 0);
+                System.out.println("user: "+user.getPassword());
+
+                try {
+                    Controller.this.register(user);
+                } catch (IOException | ClassNotFoundException e1) {
+                    e1.printStackTrace();
+                }
+                ((Stage)primaryStage.getScene().getWindow()).close();
+            }
+        });
+
+        Scene scene = new Scene(grid, 400, 275);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+
+    }
+    //注册方法
+    private void register(User user) throws IOException, ClassNotFoundException{
+        Request request = new Request();
+        request.setAction("userRegister");
+        request.setAttribute("user", user);
+
+        System.out.println(request);
+        //获取响应
+        Response response = ClientUtil.sendTextRequest(request);
+
+        ResponseStatus status = response.getStatus();
+
+        if (status == ResponseStatus.OK) {
+            User user2 = (User) response.getData("user");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Success");
+            alert.setHeaderText(null);
+            alert.setContentText("您的Account为："+ username);
+            alert.showAndWait();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Register Error.");
+            alert.showAndWait();
+        }
     }
     @FXML
     public void createServer() throws IOException {
@@ -188,19 +480,7 @@ public class Controller implements Initializable {
      */
     @FXML
     public void createGroupChat() {
-        final JFrame frame = new JFrame();
-        JButton button = new JButton("打开");
-        frame.setBounds(300, 200, 500, 500);
-        frame.getContentPane().add(button);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
 
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                JFrameShaker dialog1 = new JFrameShaker(frame);
-                dialog1.startShake();
-            }
-        });
     }
 
     /**

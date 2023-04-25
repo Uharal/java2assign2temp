@@ -21,6 +21,8 @@ public class ClientUtil {
         Response response = null;
         try {
             // 发送请求
+            System.out.println("req.action:"+request.getAction());
+
             DataBuffer.oos.writeObject(request);
             DataBuffer.oos.flush();
             System.out.println("客户端发送了请求对象:" + request.getAction());

@@ -13,7 +13,7 @@ import java.net.Socket;
  *
  */
 
-public class ClientMain {
+public class ClientMain implements Runnable{
 
     public  static void use(){
         connection(); //连接到服务器
@@ -34,7 +34,8 @@ public class ClientMain {
         new LoginFrame();  //启动登录窗体
     }
     public static void main(String[] args) {
-        use();
+        Thread thread = new Thread(new ClientMain());
+        thread.start();
     }
 
     /** 连接到服务器 */
@@ -51,5 +52,10 @@ public class ClientMain {
                     "连接服务器失败,请检查!","服务器未连上", JOptionPane.ERROR_MESSAGE);//否则连接失败
             System.exit(0);
         }
+    }
+
+    @Override
+    public void run() {
+        use();
     }
 }

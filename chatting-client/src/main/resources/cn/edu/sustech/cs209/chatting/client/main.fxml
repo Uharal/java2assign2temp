@@ -14,12 +14,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
-
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Background?>
+<?import javafx.scene.image.Image?>
 <VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="cn.edu.sustech.cs209.chatting.client.Controller">
+
     <MenuBar VBox.vgrow="NEVER">
         <Menu mnemonicParsing="false" text="Client">
-            <MenuItem mnemonicParsing="false" onAction="#createClient" text="New Client"/>
+            <MenuItem mnemonicParsing="false" onAction="#createClient" text="Login Client"/>
+            <MenuItem mnemonicParsing="false" onAction="#registerClient" text="New Client"/>
         </Menu>
         <Menu mnemonicParsing="false" text="Server">
             <MenuItem mnemonicParsing="false" onAction="#createServer" text="New Group Chat"/>
@@ -28,14 +32,26 @@
             <MenuItem mnemonicParsing="false" onAction="#Readme" text="Readme"/>
             <MenuItem mnemonicParsing="false" onAction="#Continue" text="Continue"/>
         </Menu>
+        <Menu mnemonicParsing="false" text="Test">
+            <MenuItem mnemonicParsing="false" onAction="#TestRegister" text="TestRegister"/>
+            <MenuItem mnemonicParsing="false" onAction="#TestServer" text="Testserver"/>
+        </Menu>
 
     </MenuBar>
     <SplitPane dividerPositions="0.25" focusTraversable="true" VBox.vgrow="ALWAYS">
-        <ListView fx:id="chatList" prefHeight="200.0" prefWidth="200.0"/>
+        <StackPane style="-fx-background-image: url('images/1.png');-fx-background-size: cover">
+            <ListView fx:id="chatList" prefHeight="200.0" prefWidth="200.0"/>
+        </StackPane>
         <SplitPane dividerPositions="0.85" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
-            <ListView fx:id="chatContentList" prefHeight="200.0" prefWidth="200.0"/>
+
+            <Pane style="-fx-background-image: url('images/cc1.png'); -fx-background-size: cover;">
+                <ListView fx:id="chatContentList" prefHeight="200.0" prefWidth="200.0"/>
+            </Pane>
+
             <HBox prefHeight="100.0" prefWidth="200.0">
-                <TextArea fx:id="inputArea" prefHeight="138.0" prefWidth="624.0" HBox.hgrow="ALWAYS"/>
+                <Pane style="-fx-background-image: url('images/cc2.png'); -fx-background-size: cover;">
+                    <TextArea fx:id="inputArea" prefHeight="138.0" prefWidth="624.0" HBox.hgrow="ALWAYS"/>
+                </Pane>
                 <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#doSendMessage"
                         text="Send" HBox.hgrow="ALWAYS"/>
             </HBox>

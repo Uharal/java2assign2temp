@@ -45,7 +45,7 @@ public class RegisterFrame extends JFrame {
         getContentPane().setLayout(null);
         setResizable(false);
 
-        JLabel label = new JLabel("昵称:"); //label显示
+        JLabel label = new JLabel("Nickname:"); //label显示
         label.setBounds(24, 36, 59, 17);
         getContentPane().add(label);
 
@@ -53,11 +53,11 @@ public class RegisterFrame extends JFrame {
         nickname.setBounds(90, 34, 110, 22);
         getContentPane().add(nickname);
 
-        JLabel label5 = new JLabel("密码:*");
+        JLabel label5 = new JLabel("Pwd:*");
         label5.setBounds(24, 72, 50, 17);
         getContentPane().add(label5);
 
-        JLabel label3 = new JLabel("确认密码:*");
+        JLabel label3 = new JLabel("Repwd:*");
         label3.setBounds(24, 107, 65, 17);
         getContentPane().add(label3);
 
@@ -69,7 +69,7 @@ public class RegisterFrame extends JFrame {
         pwd2Fld.setBounds(90, 105, 110, 22);
         getContentPane().add(pwd2Fld);
 
-        JLabel label4 = new JLabel("性别:");
+        JLabel label4 = new JLabel("Sex:");
         label4.setBounds(230, 36, 31, 17);
         getContentPane().add(label4);
 
@@ -160,6 +160,7 @@ public class RegisterFrame extends JFrame {
             }
         });
     }
+
     //注册方法
     private void register(User user) throws IOException, ClassNotFoundException{
         Request request = new Request();
@@ -170,6 +171,7 @@ public class RegisterFrame extends JFrame {
         Response response = ClientUtil.sendTextRequest(request);
 
         ResponseStatus status = response.getStatus();
+
         if (status == ResponseStatus.OK) {
             User user2 = (User) response.getData("user");
             JOptionPane.showMessageDialog(RegisterFrame.this,
